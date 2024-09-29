@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+   
+    <title>Beesline</title>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <h1>Beesline</h1>
+            <p> A Beegan Company</p>
+        </div>
+        <div class="nav-middle">
+            <a href="#">Shop all</a>
+            <a href="#">Concerns</a>
+            <a href="#">Recently launched</a>
+            <a href="#">Deals</a>
+        </div>
+        <div class="nav-right">
+            <i class="fa-solid fa-house"></i>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <i class="fa-solid fa-bell"></i>
+            <i class="fa-solid fa-cart-shopping"></i>
+            <i class="fa-solid fa-person"></i>
+        </div>
+    </nav>
+    <main>
+        <div class="main-container">
+            <!-- Left Column: Product Cards -->
+            <div class="products-grid">
+                <div class="product" onclick="addToCart('Product #1', 'Description of Product #1', 231,805)">
+                    <img src="image1.jpg" alt="image1">
+                    <h2> Future Barrier Cream</h2>
+                    <div class="product-description">
+                        <p>Powered by 5 essential ceramides to restore and strengthen skin’s moisture barrier,</p>
+                        <p>with breakthrough polypeptide-76 to visibly reduce the signs of aging</p>
+                        <p>Price: LBP 231,805</p>
+                    </div>
+                    <button>Add to Cart</button>
+                </div>
+    
+                <div class="product" onclick="addToCart('Product #2', 'Description of Product #2', 101,940)">
+                    <img src="image2.jpg" alt="image2">
+                    <h2>Whitening Tuner</h2>
+                    <div class="product-description">
+                        <p>This multitasking cleanser is designed to brighten, cleanse,</p>
+                        <p>while also acting as a weekly facial mud mask.</p>
+                        <p>Price: LBP 101,940</p>
+                    </div>
+                    <button>Add to Cart</button>
+                </div>
+    
+                <div class="product" onclick="addToCart('Product #3', 'Description of Product #3', 187,950)">
+                    <img src="image3.jpg" alt="image3">
+                    <h2>Keratin Shampoo</h2>
+                    <div class="product-description">
+                        <p>Our Unifying Brightening Serum is powered by 15% pure vitamin C in its most stable and potent forms,</p>
+                        <p>with better penetration than commonly used L-ascorbic acid,</p>
+                        <p>Price: LBP 187,950</p>
+                    </div>
+                    <button>Add to Cart</button>
+                </div>
+    
+                <div class="product" onclick="addToCart('Product #4', 'Description of Product #4', 250,600)">
+                    <img src="image4.jpg" alt="image4">
+                    <h2>ShowerCream Lavender</h2>
+                    <div class="product-description">
+                        <p>This luxurious shower cream creates a gentle lather with a refreshing lavender scent.</p>
+                        <p>Price: LBP 250,600</p>
+                    </div>
+                    <button>Add to Cart</button>
+                </div>
+    
+                <div class="product" onclick="addToCart('Product #5', 'Description of Product #5', 724,950)">
+                    <img src="image5.jpg" alt="image5">
+                    <h2>Men's Whitening Roll</h2>
+                    <div class="product-description">
+                        <p>This innovative and effective 48hr deodorant is completely free from aluminum and fragrance.</p>
+                        <p>Price: LBP 724,950</p>
+                    </div>
+                    <button>Add to Cart</button>
+                </div>
+    
+                <div class="product" onclick="addToCart('Product #6', 'Description of Product #6', 505,675)">
+                    <img src="image6.jpg" alt="image6">
+                    <h2>Whitening Body Lotion</h2>
+                    <div class="product-description">
+                        <p>Indulge in this soothing and nourishing lotion designed specifically for dry and sensitive skin.</p>
+                        <p>Price: LBP 505,675</p>
+                    </div>
+                    <button>Add to Cart</button>
+                </div>
+            </div>
+    
+            <!-- Right Column: Dynamic Cart (Initially empty) -->
+            <div class="cart" id="cart">
+                <p id="empty-cart-msg">No items in cart yet...</p>
+                <!-- Dynamic cart items will be added here -->
+            </div>
+        </div>
+    </main>
+    
+<script>
+     let cart = {}; // Object to store cart items
+
+function addToCart(productName, productDescription, price) {
+    // Hide the empty cart message once a product is added
+    const emptyCartMsg = document.getElementById('empty-cart-msg');
+    if (emptyCartMsg) {
+        emptyCartMsg.style.display = 'none';
+    }
+    
+    // Check if the product is already in the cart
+    if (cart[productName]) {
+        // If product exists in the cart, increase the quantity
+        cart[productName].quantity += 1;
+    } else {
+        // If product does not exist in the cart, add it with quantity 1
+        cart[productName] = {
+            description: productDescription,
+            price: price,
+            quantity: 1
+        };
+    }
+
+    // Update the cart UI
+    updateCartUI();
+    // Update the total price in the cart
+    updateCartTotal();
+}
+
+function updateCartUI() {
+    const cartElement = document.getElementById('cart');
+    
+    // Clear existing cart items from the UI
+    cartElement.innerHTML = '';
+
+    // Loop through the cart items and display them
+    for (let productName in cart) {
+        const item = cart[productName];
+        
+        // Create a new div for the cart item
+        const cartItemDiv = document.createElement('div');
+        cartItemDiv.classList.add('cart-item');
+        
+        // Add the product name, description, price, and quantity dynamically
+        cartItemDiv.innerHTML = `
+            <p><strong>${productName}</strong></p>
+            <p>${item.description}</p>
+            <p>Price: LBP ${item.price.toFixed(2)}</p>
+            <p>Quantity: ${item.quantity}</p>
+        `;
+        
+        // Append the new cart item to the cart element
+        cartElement.appendChild(cartItemDiv);
+    }
+}
+
+function updateCartTotal() {
+    let totalPrice = 0;
+
+    // Calculate the total price based on items in the cart
+    for (let productName in cart) {
+        totalPrice += cart[productName].price * cart[productName].quantity;
+    }
+
+    // Check if cart total element exists, if not create one
+    let cartTotalElement = document.getElementById('cart-total');
+    if (!cartTotalElement) {
+        cartTotalElement = document.createElement('div');
+        cartTotalElement.classList.add('cart-total');
+        cartTotalElement.id = 'cart-total';
+        document.getElementById('cart').appendChild(cartTotalElement);
+    }
+
+    // Update the cart total display
+    cartTotalElement.innerHTML = `<p><strong>Cart Total:</strong></p> <span>LBP ${totalPrice.toFixed(2)}</span>`;
+}
+</script>
+    

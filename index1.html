@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en"> 
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      main {
+        display: flex;
+      }
+
+      main > * {
+        border: 1px solid grey;
+        width: 50%;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      #products {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* Create 3 columns */
+        grid-gap: 20px; /* Space between cards */
+      }
+
+      .card {
+        border: 1px solid #ccc;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .card img {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: cover;
+      }
+
+      .cart-item {
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div id="products"></div>
+      <div id="cart"></div>
+    </main>
+
+    <script>
+      let cart = {};
+
+      let products = [
+        {
+          id: 101,
+          name: 'Future Barrier Cream',
+          price: '231.805',
+          category: 'cream',
+          inStock: true,
+          image: 'image1.jpg'
+        },
+        {
+          id: 102,
+          name: 'Whitening Tuner',
+          price: '101.940',
+          category: 'serum',
+          inStock: true,
+          image: 'image2.jpg'
+        },
+        {
+          id: 103,
+          name: 'Keratin Shampoo',
+          price: '187.950',
+          category: 'shampoo',
+          inStock: true,
+          image: 'image3.jpg'
+        },
+        {
+          id: 104,
+          name: 'Shower Cream Lavender',
+          price: '250.600',
+          category: 'showercream',
+          inStock: true,
+          image: 'image4.jpg'
+        },
+        {
+          id: 105,
+          name: 'Mens Whitening Roll',
+          price: '724.950',
+          inStock: true,
+          image: 'image5.jpg'
+        },
+        {
+          id: 106,
+          name: 'Whitening Body Lotion',
+          price: '505.675',
+          inStock: true,
+          image: 'image6.jpg'
+        }
+      ];
+
+      populateProducts();
+
+      function populateProducts() {
+       let productsGallery = document.getElementById('products'); //Selects the div#products element.
+        let productsHTML = generateProductsHTML(); // to create the HTML for all products.
+        productsGallery.innerHTML = productsHTML; //Inserts the generated HTML into the products div.
+      }
+
+      function generateProductsHTML() {
+        return products.map(function (product) {  //Uses map() to create an array of HTML strings for each product.
+          return generateSingleProductHTML(product);  //generateSingleProductHTML(product) for each product.
+        }).join(''); //Converts the array of HTML strings into a single string.
+      }
+
+      function generateSingleProductHTML(product) {
+        return `
+        <div class="card">
+            <div class="top">
+              <img src="${product.image}" alt="${product.name}">
+            </div>
+            <div class="bottom">
+                <div class="name">${product.name}</div>
+                <div class="price">$${product.price}</div>
+                <button onclick="addToCart('${product.id}')" ${product.inStock ? '' : 'disabled'}>
+                  ${product.inStock ? 'Add To Cart' : 'Out of Stock'}
+                </button>
+            </div>
+        </div>
+        `;
+      }
+      function addToCart(productId) {
+        let currentProductQuantity;
+
+        if (cart[productId]) {
+          currentProductQuantity = cart[productId];
+        } else {
+          currentProductQuantity = 0;
+        }
+
+        cart[productId] = currentProductQuantity + 1;
+        console.log(`Added product of ID ${productId} to cart!`);
+        populateCart()
+      }
+
+      function populateCart() {
+        let cartDiv = document.getElementById('cart'); //Resets the cart div content
+        cartDiv.innerHTML = '<h2>Cart</h2>'; // If no items are in the cart, displays a message.
+        if (Object.keys(cart).length === 0) { // Uses Object.keys(cart) to get product IDs.
+          cartDiv.innerHTML += '<p>Your cart is empty.</p>';
+          return;
+        }
+
+        let cartItems = Object.keys(cart).map(function (productId) {
+          let cartproduct = products.find(p => p.id == productId); // Uses find() to get product information from the products array.
+          let quantity = cart[productId];
+          return `
+            <div class="cart-item">
+              <div>${cartproduct.name} (x${quantity}) - $${(cartproduct.price * quantity).toFixed(2)}</div>
+              <button onclick="removeFromCart('${productId}')">Remove</button>
+            </div> 
+          `; //A "Remove" button that calls the removeFromCart function when clicked, passing the productId.
+        });
+
+         cartDiv.innerHTML += cartItems.join(''); //convert to string // (+=) ensures that new cart items are added without clearing the old ones.
+        cartDiv.innerHTML += `<div><strong>Total: $${calculateTotal().toFixed(2)}</strong></div>`;
+      } //decimal number
+
+      function removeFromCart(productId) {
+        if (cart[productId] > 1) {//when removing it removes 1
+          cart[productId] -= 1;
+        } else {
+          delete cart[productId];
+        }
+        populateCart();
+      }
+
+      function calculateTotal() {
+        return Object.keys(cart).reduce(function (total, productId) {
+          let product = products.find(p => p.id == productId);
+          return total + (product.price * cart[productId]);
+        }, 0);
+      }
+    </script>
+  </body>
+</html>
